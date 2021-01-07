@@ -8,11 +8,13 @@ import MapComponent from "../../components/MapComponent/MapComponent";
 import decodePolyline from "decode-google-map-polyline";
 import fonts from "../../assets/fonts/fonts";
 
-import { getAthleteRoutes } from "../../helpers/stravaApi";
+import { getRefreshToken, getAthleteRoutes } from "../../helpers/stravaApi";
 
 // Strava API
 const stravaApi = {
-  accessToken: process.env.REACT_APP_STRAVA_ACCESS_TOKEN,
+  clientId: process.env.REACT_APP_STRAVA_CLIENT_ID,
+  clientSecret: process.env.REACT_APP_STRAVA_CLIENT_SECRET,
+  refreshToken: process.env.REACT_APP_STRAVA_REFRESH_TOKEN,
   userId: process.env.REACT_APP_STRAVA_USER_ID,
   metaTitle: process.env.REACT_APP_META_TITLE,
   metaDescription: process.env.REACT_APP_META_DESCRIPTION,
@@ -55,26 +57,35 @@ function PageHome() {
   const [routes, setRoutes] = useState([]);
 
   useEffect(() => {
-    getAthleteRoutes(stravaApi.accessToken, stravaApi.userId).then((data) => {
-      if (data?.length > 0) {
-        const routes = data
-          .filter((item) => item?.starred)
-          .map((item) => {
-            const { name, map } = item;
-            const checked =
-              name?.charAt(name.length - 1) === "✓" ? true : false;
-            const path = map?.summary_polyline
-              ? decodePolyline(map.summary_polyline)
-              : null;
-            const position = path?.length > 0 ? path[0] : null;
-            return {
-              name: checked ? name.substring(0, name.length - 1) : name,
-              checked,
-              path,
-              position,
-            };
-          });
-        setRoutes(routes);
+    getRefreshToken(
+      stravaApi.clientId,
+      stravaApi.clientSecret,
+      stravaApi.refreshToken
+    ).then((data) => {
+      if (data) {
+        const { access_token } = data;
+        getAthleteRoutes(access_token, stravaApi.userId).then((data) => {
+          if (data?.length > 0) {
+            const routes = data
+              .filter((item) => item?.starred)
+              .map((item) => {
+                const { name, map } = item;
+                const checked =
+                  name?.charAt(name.length - 1) === "✓" ? true : false;
+                const path = map?.summary_polyline
+                  ? decodePolyline(map.summary_polyline)
+                  : null;
+                const position = path?.length > 0 ? path[0] : null;
+                return {
+                  name: checked ? name.substring(0, name.length - 1) : name,
+                  checked,
+                  path,
+                  position,
+                };
+              });
+            setRoutes(routes);
+          }
+        });
       }
     });
   }, []);
