@@ -25,10 +25,6 @@ const MapWithAMarker = withScriptjs(
 
       routes.forEach((route) =>
         route.path.forEach((position) => {
-          console.log(
-            "🚀 ~ file: MapComponent.js ~ line 27 ~ route.path.forEach ~ position",
-            position
-          );
           bounds.extend(new google.maps.LatLng(position));
         })
       );
@@ -49,26 +45,27 @@ const MapWithAMarker = withScriptjs(
         ref={mapRef}
       >
         {routes.map((route, index) => {
+          const { path, position, name, checked } = route;
           return (
             <React.Fragment key={`map-${index}`}>
-              {route.path && (
+              {path && (
                 <Polyline
-                  path={route.path}
-                  options={{ strokeColor: "#fc5200" }}
+                  path={path}
+                  options={{ strokeColor: !checked ? "#fc5200" : "#2ead83" }}
                 />
               )}
-              {route.position && (
+              {position && (
                 <MarkerWithLabel
-                  position={route.position}
+                  position={position}
                   labelAnchor={new google.maps.Point(50, 0)}
                   labelStyle={{
-                    backgroundColor: "#fc5200",
+                    backgroundColor: !checked ? "#fc5200" : "#2ead83",
                     color: "#ffffff",
                     fontSize: "12px",
                     padding: "4px",
                   }}
                 >
-                  <div>{route.name}</div>
+                  <div>{name}</div>
                 </MarkerWithLabel>
               )}
             </React.Fragment>

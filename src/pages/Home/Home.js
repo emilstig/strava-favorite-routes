@@ -35,22 +35,12 @@ const Wrapper = styled(Flex)`
   }
 `;
 
-const Content = styled(Section)`
-  flex: 1;
-  padding: 0 10vw;
-`;
-
 const MapWrapper = styled(Section)`
   overflow: hidden;
   position: relative;
   width: 100%;
-  height: auto;
-
-  &::before {
-    content: "";
-    display: block;
-    padding-bottom: 69%;
-  }
+  height: 100%;
+  min-height: 100vh;
 
   > div {
     position: absolute;
@@ -70,13 +60,18 @@ function PageHome() {
         const routes = data
           .filter((item) => item?.starred)
           .map((item) => {
-            const path = item?.map?.summary_polyline
-              ? decodePolyline(item.map.summary_polyline)
+            const { name, map } = item;
+            const checked =
+              name?.charAt(name.length - 1) === "✓" ? true : false;
+            const path = map?.summary_polyline
+              ? decodePolyline(map.summary_polyline)
               : null;
+            const position = path?.length > 0 ? path[0] : null;
             return {
-              name: item.name,
-              path: path,
-              position: path?.length > 0 ? path[0] : null,
+              name: checked ? name.substring(0, name.length - 1) : name,
+              checked,
+              path,
+              position,
             };
           });
         setRoutes(routes);
@@ -100,22 +95,17 @@ function PageHome() {
         setStore={setStore}
         stravaAuthEndpoint={stravaAuthEndpoint}
       /> */}
-
-      <Content className="Content" flexDirection="column">
-        {routes?.length > 0 && (
-          <Flex flexDirection="column" paddingX={"100px"}>
-            {/* <h1>Strava Adventure</h1>
-            {routes.map((route, index) => (
-              <h3 key={`route-${index}`}>{route.name}</h3>
-            ))} */}
-            <MapWrapper>
-              <div>
-                <MapComponent routes={routes} />
-              </div>
-            </MapWrapper>
-          </Flex>
-        )}
-      </Content>
+      {/* <h1>Strava Adventure</h1>
+{routes.map((route, index) => (
+  <h3 key={`route-${index}`}>{route.name}</h3>
+))} */}
+      {routes?.length > 0 && (
+        <MapWrapper>
+          <div>
+            <MapComponent routes={routes} />
+          </div>
+        </MapWrapper>
+      )}
     </Wrapper>
   );
 }
