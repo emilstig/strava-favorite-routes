@@ -1,6 +1,6 @@
 # Favorite Routes 🏃‍♂️
 
-> A prototype that presents your starred Strava routes on a google map.
+> A prototype that presents your starred Strava routes on a Google map.
 
 ## 🧘‍♂️ Demo
 
