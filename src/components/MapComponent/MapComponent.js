@@ -1,8 +1,8 @@
 /* global google */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
-import theme from "./theme.json";
+// import theme from "./theme.json";
 
 import {
   withScriptjs,
@@ -16,8 +16,8 @@ const MapWithAMarker = withScriptjs(
     const google = window.google;
     const mapRef = useRef(null);
 
-    // Fit bounds function
-    const fitBounds = () => {
+    // Fit bounds on mount, and when the markers change
+    useEffect(() => {
       const bounds = new window.google.maps.LatLngBounds();
 
       if (routes?.path?.length > 0) {
@@ -30,12 +30,7 @@ const MapWithAMarker = withScriptjs(
       );
 
       mapRef.current.fitBounds(bounds);
-    };
-
-    // Fit bounds on mount, and when the markers change
-    useEffect(() => {
-      fitBounds();
-    }, [fitBounds]);
+    }, [google.maps.LatLng, routes]);
 
     return (
       <GoogleMap

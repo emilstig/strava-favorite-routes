@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.1.2",
     "date-fns": "^2.10.0",
     "decode-google-map-polyline": "^1.0.1",
+    "is-node": "^1.0.2",
     "lodash.isempty": "^4.4.0",
     "node-sass": "^4.13.1",
     "react": "^16.13.0",
@@ -27,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "serve -s build"
   },
   "eslintConfig": {
     "extends": "react-app"
